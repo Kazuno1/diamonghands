@@ -31,8 +31,17 @@
                 <a href="challenge.html">Challenges</a>
                 <a href="aiforge.html" class="active">AI Forge</a>
             </nav>
+            <button class="dh-header-toggle" aria-label="Open navigation" aria-expanded="false">☰</button>
         </div>
     </header>
+
+    <!-- MOBILE NAV (slide-down) -->
+    <nav id="mobileNav" class="dh-mobile-nav" aria-hidden="true">
+        <a href="index.html">Home</a>
+        <a href="rankings.html">Rankings</a>
+        <a href="challenge.html">Challenges</a>
+        <a href="aiforge.html" class="active">AI Forge</a>
+    </nav>
 
     <!-- MAIN -->
     <main class="dh-main">
@@ -77,7 +86,7 @@
 
                                 <!-- NEW IMAGE SLOT -->
                                 <div class="forge-avatar-image">
-                                    <img src="/alpha.jpeg" alt="Unit Alpha">
+                                    <img src="https://github.com/Kazuno1/diamonghands/blob/main/alpha.jpeg?raw=true" alt="Unit Alpha">
                                 </div>
 
                                 <div class="forge-stats-block">
@@ -115,7 +124,7 @@
 
                                 <!-- NEW IMAGE SLOT -->
                                 <div class="forge-avatar-image">
-                                    <img src="/gamma.jpeg" alt="Unit Gamma">
+                                    <img src="https://github.com/Kazuno1/diamonghands/blob/main/gamma.jpeg?raw=true" alt="Unit Gamma">
                                 </div>
 
                                 <div class="forge-stats-block">
@@ -154,7 +163,7 @@
 
                                 <!-- NEW IMAGE SLOT -->
                                 <div class="forge-avatar-image">
-                                    <img src="/beta.jpeg" alt="Unit ">
+                                    <img src="https://github.com/Kazuno1/diamonghands/blob/main/beta.jpeg?raw=true" alt="Unit ">
                                 </div>
 
                                 <div class="forge-stats-block">
@@ -192,7 +201,7 @@
 
                                 <!-- NEW IMAGE SLOT -->
                                 <div class="forge-avatar-image">
-                                    <img src="/delta.jpeg" alt="Unit Delta">
+                                    <img src="https://github.com/Kazuno1/diamonghands/blob/main/delta.jpeg?raw=true" alt="Unit Delta">
                                 </div>
 
                                 <div class="forge-stats-block">
@@ -445,6 +454,35 @@
                 }
             });
         });
+    </script>
+    <script>
+        // Mobile nav toggle
+        (function(){
+            const toggle = document.querySelector('.dh-header-toggle');
+            const mobileNav = document.getElementById('mobileNav');
+            if (!toggle || !mobileNav) return;
+
+            function open() {
+                mobileNav.classList.add('open');
+                mobileNav.setAttribute('aria-hidden', 'false');
+                toggle.setAttribute('aria-expanded', 'true');
+            }
+            function close() {
+                mobileNav.classList.remove('open');
+                mobileNav.setAttribute('aria-hidden', 'true');
+                toggle.setAttribute('aria-expanded', 'false');
+            }
+
+            toggle.addEventListener('click', (e) => {
+                if (mobileNav.classList.contains('open')) close(); else open();
+            });
+
+            // close when a link is clicked
+            mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => close()));
+
+            // close on ESC
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+        })();
     </script>
     <script>
         // =======================

@@ -27,9 +27,17 @@
                 <a href="challenge.html" class="active">Challenges</a>
                 <a href="aiforge.html">AI Forge</a>
             </nav>
-
+            <button class="dh-header-toggle" aria-label="Open navigation" aria-expanded="false">☰</button>
         </div>
     </header>
+
+    <!-- MOBILE NAV (slide-down) -->
+    <nav id="mobileNav" class="dh-mobile-nav" aria-hidden="true">
+        <a href="index.html">Home</a>
+        <a href="rankings.html">Rankings</a>
+        <a href="challenge.html" class="active">Challenges</a>
+        <a href="aiforge.html">AI Forge</a>
+    </nav>
 
     <!-- MAIN -->
     <main class="dh-main">
@@ -495,6 +503,32 @@
                 }
             });
         });
+    </script>
+    <script>
+        // Mobile nav toggle (same as other pages)
+        (function(){
+            const toggle = document.querySelector('.dh-header-toggle');
+            const mobileNav = document.getElementById('mobileNav');
+            if (!toggle || !mobileNav) return;
+
+            function open() {
+                mobileNav.classList.add('open');
+                mobileNav.setAttribute('aria-hidden', 'false');
+                toggle.setAttribute('aria-expanded', 'true');
+            }
+            function close() {
+                mobileNav.classList.remove('open');
+                mobileNav.setAttribute('aria-hidden', 'true');
+                toggle.setAttribute('aria-expanded', 'false');
+            }
+
+            toggle.addEventListener('click', (e) => {
+                if (mobileNav.classList.contains('open')) close(); else open();
+            });
+
+            mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => close()));
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+        })();
     </script>
 
 </body>
