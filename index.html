@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Diamond Hands Trading Co.</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Inter:wght@300;400;500&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="dh-header">
+        <div class="dh-header-inner">
+            <div class="dh-logo-wrap">
+                <div class="dh-logo-icon">◆</div>
+                <span class="dh-logo-text">DIAMOND HANDS</span>
+            </div>
+
+            <nav class="dh-nav">
+                <a href="#" class="active">Home</a>
+                <a href="#">Rankings</a>
+                <a href="challenge.html">Challenges</a>
+                <a href="aiforge.html">AI Forge</a>
+            </nav>
+
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="dh-main">
+        <section class="dh-hero">
+
+            <!-- ⭐ CANVAS STARFIELD (Always visible) -->
+            <canvas id="starCanvas"></canvas>
+
+            <!-- DARK OVERLAY -->
+            <div class="dh-hero-overlay"></div>
+
+            <!-- HERO CONTENT -->
+            <div class="dh-hero-content">
+                <div class="dh-hero-text">
+
+                    <h1 class="dh-hero-title-main">DIAMOND HANDS</h1>
+                    <h2 class="dh-hero-title-sub">TRADING CO.</h2>
+
+                    <p class="dh-hero-copy">
+                        High tech, high stakes. Where gritty determination meets
+                        cutting-edge AI. For the traders, the gamers, and the grinders
+                        who play to win.
+                    </p>
+
+                    <div class="dh-hero-actions">
+                        <a href="#" class="dh-btn dh-btn-primary">View Rankings</a>
+                        <a href="#" class="dh-btn dh-btn-ghost">Enter AI Forge</a>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+    </main>
+    <footer class="dh-footer">
+        <div class="dh-footer-inner">
+
+            <div class="dh-footer-brand">
+                <div class="dh-footer-logo">
+                    <div class="dh-logo-icon" style="border-color:#2e97ec; box-shadow:0 0 14px rgba(30, 191, 255, 0.45);">
+                        ◆
+                    </div>
+                </div>
+
+                <div class="dh-footer-brand-text">
+                    <h3 class="dh-footer-title">Diamond Hands Trading Co.</h3>
+
+                    <p class="dh-footer-tagline">
+                        Master the Markets. Forge Your Trading Edge. Become a Legend.
+                    </p>
+                </div>
+            </div>
+
+
+            <!-- CENTER: QUICK LINKS -->
+            <div class="dh-footer-links">
+                <h4>Navigation</h4>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="#">Rankings</a></li>
+                    <li><a href="challenge.html">Challenges</a></li>
+                    <li><a href="aiforge.html">AI Forge</a></li>
+                </ul>
+            </div>
+
+            <!-- RIGHT: VALUE POINTS -->
+            <div class="dh-footer-values">
+                <h4>Why Trade With Us</h4>
+                <ul>
+                    <li>Ultra-transparent rules</li>
+                    <li>Up to 100% payouts</li>
+                    <li>Gamified trading universe</li>
+                    <li>AI insights (no signals)</li>
+                    <li>Lifetime XP & rankings</li>
+                </ul>
+            </div>
+
+        </div>
+
+        <div class="dh-footer-bottom">
+            <p>© 2025 Diamond Hands Trading Co., LLC. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+
+    <!-- ⭐ STARFIELD SCRIPT -->
+    <script>
+        const canvas = document.getElementById("starCanvas");
+        const ctx = canvas.getContext("2d");
+
+        let stars = [];
+        let particles = [];
+        let w, h;
+
+        function init() {
+            w = canvas.width = window.innerWidth;
+            h = canvas.height = window.innerHeight;
+
+            stars = [];
+
+            // ⭐ RGB shifting neon stars
+            for (let i = 0; i < 260; i++) {
+                stars.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    size: Math.random() * 2.8 + 0.9,
+                    speed: Math.random() * 0.6 + 0.3,
+                    drift: Math.random() * 0.4 - 0.2,
+                    twinkle: Math.random() * Math.PI * 2,
+                    twinkleSpeed: Math.random() * 0.08 + 0.02,
+                    hue: Math.random() * 360,     // ⭐ RGB color shift
+                    hueShift: Math.random() * 0.6 + 0.2
+                });
+            }
+        }
+
+        // 💥 Create an exploding star burst
+        function explodeStar(s) {
+            for (let i = 0; i < 25; i++) {
+                particles.push({
+                    x: s.x,
+                    y: s.y,
+                    size: Math.random() * 2 + 1,
+                    speed: Math.random() * 2 + 1,
+                    angle: Math.random() * Math.PI * 2,
+                    alpha: 1,
+                    hue: s.hue
+                });
+            }
+        }
+
+        // 💥 Update explosion particles
+        function updateParticles() {
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+
+                p.x += Math.cos(p.angle) * p.speed;
+                p.y += Math.sin(p.angle) * p.speed;
+                p.alpha -= 0.02;
+
+                ctx.beginPath();
+                ctx.fillStyle = `hsla(${p.hue}, 100%, 65%, ${p.alpha})`;
+                ctx.shadowBlur = 20;
+                ctx.shadowColor = `hsl(${p.hue}, 100%, 65%)`;
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+
+                if (p.alpha <= 0) particles.splice(i, 1);
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, w, h);
+
+            // ⭐ Ambient neon fog
+            let fog = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w * 0.9);
+            fog.addColorStop(0, "rgba(0,255,255,0.12)");
+            fog.addColorStop(1, "rgba(0,0,0,0)");
+            ctx.fillStyle = fog;
+            ctx.fillRect(0, 0, w, h);
+
+            // ⭐ Draw RGB neon stars
+            for (let s of stars) {
+                s.y -= s.speed;
+                s.x += s.drift;
+
+                if (s.y < 0) s.y = h;
+                if (s.x < 0) s.x = w;
+                if (s.x > w) s.x = 0;
+
+                // RGB cycle
+                s.hue += s.hueShift;
+                if (s.hue > 360) s.hue = 0;
+
+                // Neon twinkle pulse
+                let pulse = 0.5 + Math.sin(s.twinkle) * 0.5;
+                s.twinkle += s.twinkleSpeed;
+
+                ctx.beginPath();
+                ctx.fillStyle = `hsla(${s.hue}, 100%, 70%, ${pulse})`;
+                ctx.shadowBlur = 25 * pulse;
+                ctx.shadowColor = `hsl(${s.hue}, 100%, 70%)`;
+
+                ctx.arc(s.x, s.y, s.size + pulse * 0.6, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // 💥 Occasional star explosions
+            if (Math.random() < 0.01) { // ~once every 1–2 seconds
+                let randomStar = stars[Math.floor(Math.random() * stars.length)];
+                explodeStar(randomStar);
+            }
+
+            updateParticles();
+
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener("resize", init);
+
+        init();
+        animate();
+    </script>
+
+</body>
+
+</html>
