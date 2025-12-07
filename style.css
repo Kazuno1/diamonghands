@@ -1,3 +1,4 @@
+
 :root {
   --bg: #040518;
   --bg-alt: #070921;
@@ -147,13 +148,15 @@ body {
 }
 
 /* ⭐ MOVE BACKGROUND IMAGE TO A PSEUDO ELEMENT */
+/* ⭐ MOVE BACKGROUND IMAGE TO A PSEUDO ELEMENT */
 .dh-hero::before {
   content: "";
   position: absolute;
   inset: 0;
   background-image: url('https://github.com/Kazuno1/diamonghands/blob/main/Background%201.PNG?raw=true');
   background-size: cover;
-  background-position: center top;
+  /* shift background slightly down so top content isn't cut on small/large screens */
+  background-position: center -2%;
   background-repeat: no-repeat;
   z-index: -1;
   /* <-- ALWAYS BEHIND CANVAS */
@@ -1070,6 +1073,36 @@ body {
   }
 }
 
+/* Responsive adjustments for card heights and resize behavior */
+@media (max-width: 1100px) {
+  .forge-card {
+    max-width: 100%;
+  }
+
+  /* slightly reduce the default min-height on medium screens */
+  .forge-card-inner {
+    min-height: var(--forge-card-min-height, 420px);
+  }
+}
+
+@media (max-width: 700px) {
+  /* on small screens cards should size to content and not be manually resizable */
+  .forge-card {
+    width: 100%;
+    max-width: none;
+  }
+
+  .forge-card-inner {
+    min-height: auto;
+    resize: none;
+    overflow: visible;
+  }
+
+  .forge-visual {
+    height: clamp(120px, 28vw, 220px);
+  }
+}
+
 /* ================================================================
    CARD FRAME (OUTER)
    ================================================================ */
@@ -1080,7 +1113,9 @@ body {
   background: transparent;
   box-shadow: none;
   transition: 0.28s ease;
-  width: 110%;
+  /* allow cards to size naturally inside the grid; desktop can still have a max width
+     but avoid forcing overflow from grid columns */
+  width: auto;
   max-width: 610px; /* fixed larger card width */
   margin: 0 auto; /* center within grid column */
 }
@@ -1101,7 +1136,14 @@ body {
   padding: 24px 20px;
 
   /* Bigger card height */
-  min-height: 520px;
+  /* make the min-height adjustable via a CSS variable so it can be tuned per page
+    or with JS; also allow the user to resize vertically on desktop */
+  min-height: var(--forge-card-min-height, 520px);
+
+  /* enable manual vertical resize where supported and allow scrolling if content
+    exceeds the size the user sets */
+  resize: vertical;
+  overflow: auto;
 
 
   display: flex;
@@ -1156,7 +1198,8 @@ body {
 
 .forge-visual {
   width: 100%;
-  height: 230px;
+  /* responsive visual slot height: scales with viewport but stays within bounds */
+  height: clamp(160px, 18vw, 260px);
   border-radius: 16px;
   overflow: hidden;
   margin-bottom: 16px;
@@ -1177,7 +1220,8 @@ body {
 .forge-avatar-image {
   width: 100%;
   max-width: 640px;
-  max-height: 900px;
+  /* keep avatar image area scalable on smaller screens */
+  max-height: clamp(240px, 50vh, 900px);
   margin: 0 auto 12px;
   overflow: hidden;
   display: block;
