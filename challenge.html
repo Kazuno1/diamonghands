@@ -32,31 +32,53 @@
         </div>
     </header>
     <!-- SETTINGS BUTTON -->
-    <button id="siteSettingsBtn" class="site-settings-btn" aria-label="Site Settings">
-        ⚙️
-    </button>
+    <button id="siteSettingsBtn" class="site-settings-btn">⚙️</button>
+    <div id="siteSettingsPanel" class="site-settings-panel">
 
-    <!-- SETTINGS PANEL -->
-    <div id="siteSettingsPanel" class="site-settings-panel" aria-hidden="true">
-        <h4>Display Settings</h4>
+        <h3>Admin Display Controls</h3>
 
-        <label class="settings-toggle">
-            <input type="checkbox" id="toggleBackground">
-            Disable Background Animation
-        </label>
+        <!-- LOCK -->
+        <div id="adminLock" class="admin-lock">
+            <input type="password" id="adminPass" placeholder="Admin Access Code">
+            <button id="unlockAdmin">Unlock</button>
+        </div>
 
-        <label class="settings-toggle">
-            <input type="checkbox" id="toggleEffects">
-            Disable Visual Effects
-        </label>
+        <!-- CONTROLS -->
+        <div id="adminControls" class="admin-controls">
 
-        <label class="settings-toggle">
-            <input type="checkbox" id="toggleBackgroundImage">
-            Remove Background Image
-        </label>
+            <div class="toggle-row">
+                <label><input type="checkbox" id="toggleBackground"> Disable Background Animation</label>
+                <label><input type="checkbox" id="toggleEffects"> Disable Visual Effects</label>
+                <label><input type="checkbox" id="toggleBackgroundImage"> Disable All Background Images</label>
+            </div>
+
+            <hr>
+
+            <!-- BACKGROUND UPLOADS -->
+            <div class="bg-section">
+                <h4>Home Background</h4>
+                <input type="file" id="bgHome" accept="image/*">
+                <div class="bg-preview" id="previewHome"></div>
+            </div>
+
+            <div class="bg-section">
+                <h4>Challenges Background</h4>
+                <input type="file" id="bgChallenges" accept="image/*">
+                <div class="bg-preview" id="previewChallenges"></div>
+            </div>
+
+            <div class="bg-section">
+                <h4>AI Forge Background</h4>
+                <input type="file" id="bgForge" accept="image/*">
+                <div class="bg-preview" id="previewForge"></div>
+            </div>
+
+            <button id="saveAdminSettings" class="save-btn">Save & Apply</button>
+        </div>
 
         <button id="closeSettings" class="settings-close">Close</button>
     </div>
+
 
 
     <!-- MOBILE NAV (slide-down) -->
@@ -69,7 +91,7 @@
 
     <!-- MAIN -->
     <main class="dh-main">
-        <section class="dh-hero dh-hero-challenges challenges-bg">
+        <section class="dh-hero dh-hero-challenges challenges-bg" id="heroChallenges">
             <!-- Starfield above background -->
             <canvas id="starCanvas"></canvas>
 
@@ -626,64 +648,148 @@
     </script>
 
     <script>
-        (() => {
+        document.addEventListener("DOMContentLoaded", () => {
+            const STORAGE = "dh-admin-global";
+            const ADMIN_CODE = "diamondhands"; // change this
+
+            // Panel open/close
             const btn = document.getElementById("siteSettingsBtn");
             const panel = document.getElementById("siteSettingsPanel");
             const closeBtn = document.getElementById("closeSettings");
 
-            const bgToggle = document.getElementById("toggleBackground");
-            const fxToggle = document.getElementById("toggleEffects");
-            const bgImageToggle = document.getElementById("toggleBackgroundImage");
-
-            // Grab ALL star canvases across the page
-            const starCanvases = document.querySelectorAll("#starCanvas, canvas.starfield");
-
-            // Load saved preferences
-            const prefs = JSON.parse(localStorage.getItem("dhSitePrefs") || "{}");
-
-            bgToggle.checked = !!prefs.disableBackground;
-            fxToggle.checked = !!prefs.disableEffects;
-            bgImageToggle.checked = !!prefs.disableBgImage;
-
-            applyPrefs(prefs);
-
-            btn.addEventListener("click", () => {
-                panel.classList.toggle("open");
-            });
-
-            closeBtn.addEventListener("click", () => {
-                panel.classList.remove("open");
-            });
-
-            bgToggle.addEventListener("change", savePrefs);
-            fxToggle.addEventListener("change", savePrefs);
-            bgImageToggle.addEventListener("change", savePrefs);
-
-            function savePrefs() {
-                const newPrefs = {
-                    disableBackground: bgToggle.checked,
-                    disableEffects: fxToggle.checked,
-                    disableBgImage: bgImageToggle.checked
-                };
-
-                localStorage.setItem("dhSitePrefs", JSON.stringify(newPrefs));
-                applyPrefs(newPrefs);
+            if (!btn || !panel) {
+                console.error("Missing #siteSettingsBtn or #siteSettingsPanel");
+                return;
             }
 
-            function applyPrefs(p) {
-                // ⭐ Disable starfield animation (ALL sections)
-                starCanvases.forEach(c => {
-                    c.style.display = p.disableBackground ? "none" : "block";
+            btn.addEventListener("click", () => panel.classList.toggle("open"));
+            closeBtn?.addEventListener("click", () => panel.classList.remove("open"));
+
+            // Admin unlock
+            const unlockBtn = document.getElementById("unlockAdmin");
+            const adminPass = document.getElementById("adminPass");
+            const adminLock = document.getElementById("adminLock");
+            const adminControls = document.getElementById("adminControls");
+
+            const authed = localStorage.getItem("dh-admin-auth") === "true";
+            if (authed) {
+                if (adminLock) adminLock.style.display = "none";
+                if (adminControls) adminControls.style.display = "block";
+            }
+
+            unlockBtn?.addEventListener("click", () => {
+                if (!adminPass) return;
+                if (adminPass.value === ADMIN_CODE) {
+                    localStorage.setItem("dh-admin-auth", "true");
+                    if (adminLock) adminLock.style.display = "none";
+                    if (adminControls) adminControls.style.display = "block";
+                } else {
+                    alert("Invalid admin code");
+                }
+            });
+
+            // Controls
+            const toggleBackground = document.getElementById("toggleBackground");
+            const toggleEffects = document.getElementById("toggleEffects");
+            const toggleBgImages = document.getElementById("toggleBackgroundImage");
+
+            const inputHome = document.getElementById("bgHome");
+            const inputChallenges = document.getElementById("bgChallenges");
+            const inputForge = document.getElementById("bgForge");
+
+            const prevHome = document.getElementById("previewHome");
+            const prevChallenges = document.getElementById("previewChallenges");
+            const prevForge = document.getElementById("previewForge");
+
+            const saveBtn = document.getElementById("saveAdminSettings");
+
+            // Targets (these MUST exist)
+            const heroHome = document.getElementById("heroHome");
+            const heroChallenges = document.getElementById("heroChallenges");
+            const heroForge = document.getElementById("heroForge");
+
+            if (!heroHome || !heroChallenges || !heroForge) {
+                console.error("Missing hero targets. Add IDs: #heroHome, #heroChallenges, #heroForge");
+            }
+
+            // Load saved settings
+            let state = JSON.parse(localStorage.getItem(STORAGE) || "{}");
+
+            // Initialize checkbox UI
+            if (toggleBackground) toggleBackground.checked = !!state.disableBackground;
+            if (toggleEffects) toggleEffects.checked = !!state.disableEffects;
+            if (toggleBgImages) toggleBgImages.checked = !!state.disableBgImage;
+
+            // Initialize previews
+            if (prevHome && state.home) prevHome.style.backgroundImage = `url(${state.home})`;
+            if (prevChallenges && state.challenges) prevChallenges.style.backgroundImage = `url(${state.challenges})`;
+            if (prevForge && state.forge) prevForge.style.backgroundImage = `url(${state.forge})`;
+
+            apply(state);
+
+            // Upload handlers (store as base64)
+            bindUpload(inputHome, "home", prevHome);
+            bindUpload(inputChallenges, "challenges", prevChallenges);
+            bindUpload(inputForge, "forge", prevForge);
+
+            function bindUpload(inputEl, key, previewEl) {
+                if (!inputEl) return;
+                inputEl.addEventListener("change", () => {
+                    const file = inputEl.files?.[0];
+                    if (!file) return;
+
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        state[key] = e.target.result;
+                        if (previewEl) previewEl.style.backgroundImage = `url(${state[key]})`;
+                        // DO NOT auto-apply until Save & Apply (optional). If you want instant apply, uncomment next line:
+                        // apply(state);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            // Save & Apply button
+            saveBtn?.addEventListener("click", () => {
+                state.disableBackground = toggleBackground?.checked || false;
+                state.disableEffects = toggleEffects?.checked || false;
+                state.disableBgImage = toggleBgImages?.checked || false;
+
+                localStorage.setItem(STORAGE, JSON.stringify(state));
+                apply(state);
+            });
+
+            // Live toggles (optional: apply immediately when checkbox changes)
+            toggleBackground?.addEventListener("change", () => { state.disableBackground = toggleBackground.checked; apply(state); localStorage.setItem(STORAGE, JSON.stringify(state)); });
+            toggleEffects?.addEventListener("change", () => { state.disableEffects = toggleEffects.checked; apply(state); localStorage.setItem(STORAGE, JSON.stringify(state)); });
+            toggleBgImages?.addEventListener("change", () => { state.disableBgImage = toggleBgImages.checked; apply(state); localStorage.setItem(STORAGE, JSON.stringify(state)); });
+
+            function apply(s) {
+                // Disable visual effects
+                document.documentElement.classList.toggle("no-effects", !!s.disableEffects);
+
+                // Disable background animation (hide ALL star canvases)
+                document.querySelectorAll("canvas#starCanvas, canvas.starfield, #starCanvas").forEach(c => {
+                    c.style.display = s.disableBackground ? "none" : "block";
                 });
 
-                // 💥 Disable visual effects globally
-                document.documentElement.classList.toggle("no-effects", !!p.disableEffects);
+                // Disable all background images
+                document.documentElement.classList.toggle("admin-no-bg", !!s.disableBgImage);
 
-                // 🖼 Remove background images globally
-                document.documentElement.classList.toggle("no-bg", !!p.disableBgImage);
+                // Apply per-part background images
+                if (!s.disableBgImage) {
+                    if (heroHome && s.home) heroHome.style.backgroundImage = `url(${s.home})`;
+                    if (heroChallenges && s.challenges) heroChallenges.style.backgroundImage = `url(${s.challenges})`;
+                    if (heroForge && s.forge) heroForge.style.backgroundImage = `url(${s.forge})`;
+                } else {
+                    if (heroHome) heroHome.style.backgroundImage = "";
+                    if (heroChallenges) heroChallenges.style.backgroundImage = "";
+                    if (heroForge) heroForge.style.backgroundImage = "";
+                }
             }
-        })();
+        });
     </script>
+
 
 
 </body>
