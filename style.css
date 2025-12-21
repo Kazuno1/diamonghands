@@ -1,4 +1,3 @@
-
 :root {
   --bg: #040518;
   --bg-alt: #070921;
@@ -286,7 +285,7 @@ body {
     font-size: 20px;
     background: transparent;
     color: var(--text-muted);
-    border: 1px solid rgba(255,255,255,0.04);
+    border: 1px solid rgba(255, 255, 255, 0.04);
     border-radius: 10px;
     cursor: pointer;
     margin-left: 12px;
@@ -299,12 +298,12 @@ body {
   top: calc(var(--nav-height));
   left: 0;
   right: 0;
-  background: linear-gradient(180deg, rgba(6,10,30,0.98), rgba(3,6,20,0.96));
-  border-bottom: 1px solid rgba(0,212,255,0.08);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  background: linear-gradient(180deg, rgba(6, 10, 30, 0.98), rgba(3, 6, 20, 0.96));
+  border-bottom: 1px solid rgba(0, 212, 255, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
   transform: translateY(-12px) scaleY(0);
   transform-origin: top center;
-  transition: transform 260ms cubic-bezier(.2,.9,.2,1), opacity 180ms ease;
+  transition: transform 260ms cubic-bezier(.2, .9, .2, 1), opacity 180ms ease;
   opacity: 0;
   z-index: 60;
   padding: 12px 20px;
@@ -312,6 +311,7 @@ body {
   gap: 12px;
   justify-content: center;
 }
+
 .dh-mobile-nav a {
   color: var(--text-main);
   text-decoration: none;
@@ -320,11 +320,13 @@ body {
   font-weight: 600;
   letter-spacing: 0.06em;
 }
+
 .dh-mobile-nav a.active,
 .dh-mobile-nav a:hover {
   color: var(--accent);
-  background: rgba(0,212,255,0.04);
+  background: rgba(0, 212, 255, 0.04);
 }
+
 .dh-mobile-nav.open {
   transform: translateY(0) scaleY(1);
   opacity: 1;
@@ -332,8 +334,13 @@ body {
 
 /* hide mobile nav on large screens */
 @media (min-width: 901px) {
-  .dh-header-toggle { display: none; }
-  .dh-mobile-nav { display: none; }
+  .dh-header-toggle {
+    display: none;
+  }
+
+  .dh-mobile-nav {
+    display: none;
+  }
 }
 
 @media (max-width: 600px) {
@@ -374,11 +381,14 @@ body {
 }
 
 .challenge-title {
-  font-family: "Orbitron", system-ui, sans-serif;
-  font-size: clamp(28px, 3vw, 38px);
-  letter-spacing: 0.18em;
+  font-family: "Orbitron";
+  font-size: clamp(40px, 5vw, 60px);
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  margin: 0 0 10px;
+  background: linear-gradient(90deg, #e5f6ff 0%, #19c5ff 35%, #ff42e9 60%, #7c8cff 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
 }
 
 .challenge-subtitle {
@@ -391,13 +401,57 @@ body {
 /* Panels */
 
 .challenge-panel {
+  position: relative;
+  /* REQUIRED for ::before */
   background: rgba(10, 14, 40, 0.18) !important;
   border-radius: 22px;
   border: 1px solid rgba(0, 212, 255, 0.45);
   box-shadow: 0 0 32px rgba(0, 212, 255, 0.35);
   padding: 24px 24px 28px;
   backdrop-filter: blur(14px);
+  z-index: 1;
 }
+
+/* ANIMATED BORDER */
+.challenge-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  /* border thickness */
+  border-radius: 22px;
+  background: linear-gradient(130deg,
+      #00eaff,
+      #008cdd,
+      #5c4dff,
+      #00eaff,
+      #008cdd);
+  background-size: 400% 400%;
+  animation: challengeGlow 3s linear infinite;
+  z-index: -1;
+
+  /* Mask trick to keep border-only */
+  mask: linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+/* KEYFRAMES */
+@keyframes challengeGlow {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 
 .challenge-panel-header h2 {
   font-family: "Orbitron", system-ui, sans-serif;
@@ -1030,6 +1084,7 @@ body {
   font-size: 12px;
   color: var(--text-muted);
 }
+
 .forge-subcaption span {
   color: #ff42e9;
 }
@@ -1059,7 +1114,8 @@ body {
   margin-top: 18px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 42px; /* increased spacing between cards */
+  gap: 42px;
+  /* increased spacing between cards */
 }
 
 @media (max-width: 1100px) {
@@ -1067,6 +1123,7 @@ body {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
 @media (max-width: 700px) {
   .forge-unit-row {
     grid-template-columns: 1fr;
@@ -1086,6 +1143,7 @@ body {
 }
 
 @media (max-width: 700px) {
+
   /* on small screens cards should size to content and not be manually resizable */
   .forge-card {
     width: 100%;
@@ -1108,7 +1166,8 @@ body {
    ================================================================ */
 
 .forge-card {
-  padding: 0; /* removed glow padding */
+  padding: 0;
+  /* removed glow padding */
   border-radius: 22px;
   background: transparent;
   box-shadow: none;
@@ -1116,8 +1175,10 @@ body {
   /* allow cards to size naturally inside the grid; desktop can still have a max width
      but avoid forcing overflow from grid columns */
   width: auto;
-  max-width: 610px; /* fixed larger card width */
-  margin: 0 auto; /* center within grid column */
+  max-width: 610px;
+  /* fixed larger card width */
+  margin: 0 auto;
+  /* center within grid column */
 }
 
 .forge-card:hover {
@@ -1159,14 +1220,12 @@ body {
   padding: 5px;
   border-radius: 20px;
 
-  background: linear-gradient(
-      130deg,
+  background: linear-gradient(130deg,
       #00eaff,
       #008cdd,
       #5c4dff,
       #00eaff,
-      #008cdd
-  );
+      #008cdd);
   background-size: 400% 400%;
   animation: diamondRun 3s linear infinite;
 
@@ -1177,17 +1236,25 @@ body {
     linear-gradient(#fff 0 0);
 
   -webkit-mask-composite: xor;
-          mask-composite: exclude;
+  mask-composite: exclude;
 }
 
 @keyframes diamondRun {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 /* Content stays above glowing frame */
-.forge-card-inner > * {
+.forge-card-inner>* {
   position: relative;
   z-index: 2;
 }
@@ -1226,6 +1293,7 @@ body {
   overflow: hidden;
   display: block;
 }
+
 .forge-avatar-image img {
   width: 100%;
   height: auto;
@@ -1265,6 +1333,7 @@ body {
   align-items: center;
   gap: 6px;
 }
+
 .forge-card-label .dot {
   width: 6px;
   height: 6px;
@@ -1375,206 +1444,321 @@ body {
 
 /* Floating Panel Container */
 .scan-panel {
-    position: fixed;
-    inset: 0;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    background: rgba(5, 8, 20, 0.85);
-    backdrop-filter: blur(8px);
-    z-index: 9999;
-    opacity: 0;
-    transition: 0.3s ease;
+  position: fixed;
+  inset: 0;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  background: rgba(5, 8, 20, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  opacity: 0;
+  transition: 0.3s ease;
 }
+
 .scan-panel.show {
-    display: flex;
-    opacity: 1;
+  display: flex;
+  opacity: 1;
 }
 
 /* Panel Box */
 .scan-panel-inner {
-    width: 82%;
-    max-width: 800px;
-    background: #0b0f21;
-    border-radius: 14px;
-    border: 1px solid rgba(0,255,255,0.2);
-    padding: 32px;
-    display: flex;
-    gap: 32px;
+  width: 82%;
+  max-width: 800px;
+  background: #0b0f21;
+  border-radius: 14px;
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  padding: 32px;
+  display: flex;
+  gap: 32px;
 }
 
 /* LEFT SIDE */
 .scan-left {
-    width: 45%;
+  width: 45%;
 }
+
 .scan-pill {
-    font-family: Orbitron;
-    font-size: 12px;
-    letter-spacing: 0.14em;
-    margin-bottom: 18px;
-    padding: 6px 14px;
-    border-radius: 999px;
-    color: cyan;
-    border: 1px solid rgba(0,255,255,0.4);
-    display: inline-flex;
-    gap: 6px;
+  font-family: Orbitron;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  margin-bottom: 18px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  color: cyan;
+  border: 1px solid rgba(0, 255, 255, 0.4);
+  display: inline-flex;
+  gap: 6px;
 }
 
 .scan-avatar-box {
-    background: #000;
-    border-radius: 12px;
-    overflow: hidden;
-    height: 400px;
-    width: 105%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  height: 400px;
+  width: 105%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
 }
 
 .scan-avatar-box img {
-    width: 120%;
-    height: 100%;
-    object-fit: contain;
+  width: 120%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .no-data {
-    position: absolute;
-    bottom: 12px;
-    text-align: center;
-    width: 100%;
-    opacity: 0.3;
-    font-size: 12px;
-    color: #ccc;
+  position: absolute;
+  bottom: 12px;
+  text-align: center;
+  width: 100%;
+  opacity: 0.3;
+  font-size: 12px;
+  color: #ccc;
 }
 
 /* RIGHT SIDE */
 .scan-right {
-    width: 55%;
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
+  width: 55%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
 }
 
 .scan-section-title {
-    font-family: Orbitron;
-    font-size: 12px;
-    letter-spacing: 0.16em;
-    color: #8ca0d8;
+  font-family: Orbitron;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  color: #8ca0d8;
 }
+
 .base-tag {
-    float: right;
-    font-size: 11px;
-    color: #6474a5;
+  float: right;
+  font-size: 11px;
+  color: #6474a5;
 }
 
 .scan-unit-name {
-    font-family: Orbitron;
-    font-size: 28px;
-    color: #ffffff;
+  font-family: Orbitron;
+  font-size: 28px;
+  color: #ffffff;
 }
 
 /* Secure Access Code Input */
 .scan-label {
-    font-size: 12px;
-    letter-spacing: 0.12em;
-    opacity: 0.8;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  opacity: 0.8;
 }
+
 .scan-code-input {
-    width: 100%;
-    padding: 12px 14px;
-    background: #0f142d;
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 6px;
-    color: #e8f6ff;
-    letter-spacing: 0.3em;
-    font-family: Orbitron;
+  width: 100%;
+  padding: 12px 14px;
+  background: #0f142d;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  color: #e8f6ff;
+  letter-spacing: 0.3em;
+  font-family: Orbitron;
 }
+
 .scan-code-input::placeholder {
-    color: #4f6288;
-    letter-spacing: normal;
+  color: #4f6288;
+  letter-spacing: normal;
 }
 
 .scan-divider {
-    width: 100%;
-    height: 2px;
-    background: linear-gradient(90deg,#ff00e1,#00eaff);
-    margin: 6px 0 10px;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, #ff00e1, #00eaff);
+  margin: 6px 0 10px;
 }
 
 /* PERFORMANCE BOX */
 .scan-rating-box {
-    padding: 16px;
-    border-radius: 10px;
-    border: 1px solid rgba(0,255,255,0.2);
-    background: rgba(10,16,35,0.6);
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  background: rgba(10, 16, 35, 0.6);
 }
+
 .rating-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-family: Orbitron;
-    font-size: 12px;
-    color: cyan;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: Orbitron;
+  font-size: 12px;
+  color: cyan;
 }
+
 .pulse {
-    color: #00ffea;
+  color: #00ffea;
 }
+
 .rating-score {
-    color: white;
+  color: white;
 }
 
 /* BUTTONS */
 .scan-register-btn {
-    margin-top: 8px;
-    padding: 14px;
-    background: cyan;
-    border-radius: 6px;
-    border: none;
-    font-family: Orbitron;
-    cursor: pointer;
+  margin-top: 8px;
+  padding: 14px;
+  background: cyan;
+  border-radius: 6px;
+  border: none;
+  font-family: Orbitron;
+  cursor: pointer;
 }
+
 .scan-cancel-btn {
-    margin-top: 6px;
-    padding: 10px;
-    background: none;
-    border: none;
-    font-size: 12px;
-    color: #8ca0d8;
-    cursor: pointer;
+  margin-top: 6px;
+  padding: 10px;
+  background: none;
+  border: none;
+  font-size: 12px;
+  color: #8ca0d8;
+  cursor: pointer;
 }
 
 /* PERFORMANCE RATING HEADER */
 .scan-rating-box .rating-header {
-    font-family: "Orbitron", sans-serif;
-    font-size: 13px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: #00eaff;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 10px;
+  font-family: "Orbitron", sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #00eaff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
 }
 
 /* Pulse Icon */
 .scan-rating-box .pulse {
-    font-size: 16px;
-    color: #00eaff;
-    animation: pulseGlow 2s infinite ease-in-out;
+  font-size: 16px;
+  color: #00eaff;
+  animation: pulseGlow 2s infinite ease-in-out;
 }
 
 @keyframes pulseGlow {
-    0% { opacity: 0.4; }
-    50% { opacity: 1; }
-    100% { opacity: 0.4; }
+  0% {
+    opacity: 0.4;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.4;
+  }
 }
 
 /* Body text inside rating panel */
 .scan-rating-box p {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 14px;
-    line-height: 1.4;
-    color: #cfd8ff;
-    margin-top: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #cfd8ff;
+  margin-top: 6px;
+}
+
+/* SETTINGS BUTTON */
+.site-settings-btn {
+  position: fixed;
+  bottom: 22px;
+  right: 22px;
+  z-index: 9999;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #0d1a44;
+  color: #00e6ff;
+  font-size: 20px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 0 14px rgba(0, 230, 255, 0.6);
+}
+
+/* PANEL */
+.site-settings-panel {
+  position: fixed;
+  bottom: 82px;
+  right: 22px;
+  width: 260px;
+  padding: 16px;
+  border-radius: 14px;
+  background: rgba(10, 20, 50, 0.95);
+  color: #fff;
+  font-family: Inter, sans-serif;
+  z-index: 9999;
+  display: none;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+.site-settings-panel.open {
+  display: block;
+}
+
+.site-settings-panel h4 {
+  margin-bottom: 12px;
+  font-family: Orbitron, sans-serif;
+  font-size: 14px;
+}
+
+.settings-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.settings-close {
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  background: #00e6ff;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* EFFECTS OFF MODE */
+.no-effects * {
+  animation: none !important;
+  transition: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* EFFECTS OFF MODE */
+.no-effects * {
+  animation: none !important;
+  transition: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* REMOVE ALL BACKGROUND IMAGES GLOBALLY */
+.no-bg body,
+.no-bg .dh-hero,
+.no-bg .challenges-bg,
+.no-bg .aiforge-bg,
+.no-bg .hero-bg,
+.no-bg [style*="background-image"] {
+  background-image: none !important;
+}
+
+/* Remove pseudo-element backgrounds */
+.no-bg .dh-hero::before,
+.no-bg .dh-hero::after {
+  background-image: none !important;
+  content: none !important;
 }

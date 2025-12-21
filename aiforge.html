@@ -30,10 +30,38 @@
                 <a href="rankings.html">Rankings</a>
                 <a href="challenge.html">Challenges</a>
                 <a href="aiforge.html" class="active">AI Forge</a>
+                <a href="#">Join Now</a>
             </nav>
             <button class="dh-header-toggle" aria-label="Open navigation" aria-expanded="false">☰</button>
         </div>
     </header>
+    <!-- SETTINGS BUTTON -->
+    <button id="siteSettingsBtn" class="site-settings-btn" aria-label="Site Settings">
+        ⚙️
+    </button>
+
+    <!-- SETTINGS PANEL -->
+    <div id="siteSettingsPanel" class="site-settings-panel" aria-hidden="true">
+        <h4>Display Settings</h4>
+
+        <label class="settings-toggle">
+            <input type="checkbox" id="toggleBackground">
+            Disable Background Animation
+        </label>
+
+        <label class="settings-toggle">
+            <input type="checkbox" id="toggleEffects">
+            Disable Visual Effects
+        </label>
+
+        <label class="settings-toggle">
+            <input type="checkbox" id="toggleBackgroundImage">
+            Remove Background Image
+        </label>
+
+        <button id="closeSettings" class="settings-close">Close</button>
+    </div>
+
 
     <!-- MOBILE NAV (slide-down) -->
     <nav id="mobileNav" class="dh-mobile-nav" aria-hidden="true">
@@ -86,7 +114,8 @@
 
                                 <!-- NEW IMAGE SLOT -->
                                 <div class="forge-avatar-image">
-                                    <img src="https://github.com/Kazuno1/diamonghands/blob/main/alpha.jpeg?raw=true" alt="Unit Alpha">
+                                    <img src="https://github.com/Kazuno1/diamonghands/blob/main/alpha.jpeg?raw=true"
+                                        alt="Unit Alpha">
                                 </div>
 
                                 <div class="forge-stats-block">
@@ -124,7 +153,8 @@
 
                                 <!-- NEW IMAGE SLOT -->
                                 <div class="forge-avatar-image">
-                                    <img src="https://github.com/Kazuno1/diamonghands/blob/main/gamma.jpeg?raw=true" alt="Unit Gamma">
+                                    <img src="https://github.com/Kazuno1/diamonghands/blob/main/gamma.jpeg?raw=true"
+                                        alt="Unit Gamma">
                                 </div>
 
                                 <div class="forge-stats-block">
@@ -163,7 +193,8 @@
 
                                 <!-- NEW IMAGE SLOT -->
                                 <div class="forge-avatar-image">
-                                    <img src="https://github.com/Kazuno1/diamonghands/blob/main/beta.jpeg?raw=true" alt="Unit ">
+                                    <img src="https://github.com/Kazuno1/diamonghands/blob/main/beta.jpeg?raw=true"
+                                        alt="Unit ">
                                 </div>
 
                                 <div class="forge-stats-block">
@@ -201,7 +232,8 @@
 
                                 <!-- NEW IMAGE SLOT -->
                                 <div class="forge-avatar-image">
-                                    <img src="https://github.com/Kazuno1/diamonghands/blob/main/delta.jpeg?raw=true" alt="Unit Delta">
+                                    <img src="https://github.com/Kazuno1/diamonghands/blob/main/delta.jpeg?raw=true"
+                                        alt="Unit Delta">
                                 </div>
 
                                 <div class="forge-stats-block">
@@ -259,8 +291,9 @@
 
                     <!-- Secure Access Code -->
                     <label class="scan-label">SECURE ACCESS CODE</label>
-                    <input id="scanAccessCode" type="password" inputmode="numeric" pattern="\d{4}" class="scan-code-input"
-                        placeholder="Enter 4-digit code" maxlength="4" autocomplete="one-time-code" />
+                    <input id="scanAccessCode" type="password" inputmode="numeric" pattern="\d{4}"
+                        class="scan-code-input" placeholder="Enter 4-digit code" maxlength="4"
+                        autocomplete="one-time-code" />
 
                     <div class="scan-divider"></div>
 
@@ -457,7 +490,7 @@
     </script>
     <script>
         // Mobile nav toggle
-        (function(){
+        (function () {
             const toggle = document.querySelector('.dh-header-toggle');
             const mobileNav = document.getElementById('mobileNav');
             if (!toggle || !mobileNav) return;
@@ -505,13 +538,13 @@
         }
 
         // Enforce 4-digit numeric code on the access input
-        (function enforceFourDigitCode(){
+        (function enforceFourDigitCode() {
             const scanInput = document.getElementById('scanAccessCode');
             if (!scanInput) return;
 
             // Sanitize on input: allow only digits, max length 4
             scanInput.addEventListener('input', (e) => {
-                const cleaned = e.target.value.replace(/\D/g, '').slice(0,4);
+                const cleaned = e.target.value.replace(/\D/g, '').slice(0, 4);
                 if (e.target.value !== cleaned) e.target.value = cleaned;
             });
 
@@ -519,7 +552,7 @@
             scanInput.addEventListener('paste', (e) => {
                 e.preventDefault();
                 const paste = (e.clipboardData || window.clipboardData).getData('text') || '';
-                e.target.value = paste.replace(/\D/g, '').slice(0,4);
+                e.target.value = paste.replace(/\D/g, '').slice(0, 4);
             });
 
             // Optional: visual hint for invalid length on blur
@@ -547,6 +580,66 @@
                 );
             });
         });
+    </script>
+
+    <script>
+        (() => {
+            const btn = document.getElementById("siteSettingsBtn");
+            const panel = document.getElementById("siteSettingsPanel");
+            const closeBtn = document.getElementById("closeSettings");
+
+            const bgToggle = document.getElementById("toggleBackground");
+            const fxToggle = document.getElementById("toggleEffects");
+            const bgImageToggle = document.getElementById("toggleBackgroundImage");
+
+            // Grab ALL star canvases across the page
+            const starCanvases = document.querySelectorAll("#starCanvas, canvas.starfield");
+
+            // Load saved preferences
+            const prefs = JSON.parse(localStorage.getItem("dhSitePrefs") || "{}");
+
+            bgToggle.checked = !!prefs.disableBackground;
+            fxToggle.checked = !!prefs.disableEffects;
+            bgImageToggle.checked = !!prefs.disableBgImage;
+
+            applyPrefs(prefs);
+
+            btn.addEventListener("click", () => {
+                panel.classList.toggle("open");
+            });
+
+            closeBtn.addEventListener("click", () => {
+                panel.classList.remove("open");
+            });
+
+            bgToggle.addEventListener("change", savePrefs);
+            fxToggle.addEventListener("change", savePrefs);
+            bgImageToggle.addEventListener("change", savePrefs);
+
+            function savePrefs() {
+                const newPrefs = {
+                    disableBackground: bgToggle.checked,
+                    disableEffects: fxToggle.checked,
+                    disableBgImage: bgImageToggle.checked
+                };
+
+                localStorage.setItem("dhSitePrefs", JSON.stringify(newPrefs));
+                applyPrefs(newPrefs);
+            }
+
+            function applyPrefs(p) {
+                // ⭐ Disable starfield animation (ALL sections)
+                starCanvases.forEach(c => {
+                    c.style.display = p.disableBackground ? "none" : "block";
+                });
+
+                // 💥 Disable visual effects globally
+                document.documentElement.classList.toggle("no-effects", !!p.disableEffects);
+
+                // 🖼 Remove background images globally
+                document.documentElement.classList.toggle("no-bg", !!p.disableBgImage);
+            }
+        })();
     </script>
 
 </body>

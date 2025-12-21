@@ -26,10 +26,38 @@
                 <a href="rankings.html">Rankings</a>
                 <a href="challenge.html" class="active">Challenges</a>
                 <a href="aiforge.html">AI Forge</a>
+                <a href="#">Join Now</a>
             </nav>
             <button class="dh-header-toggle" aria-label="Open navigation" aria-expanded="false">☰</button>
         </div>
     </header>
+    <!-- SETTINGS BUTTON -->
+    <button id="siteSettingsBtn" class="site-settings-btn" aria-label="Site Settings">
+        ⚙️
+    </button>
+
+    <!-- SETTINGS PANEL -->
+    <div id="siteSettingsPanel" class="site-settings-panel" aria-hidden="true">
+        <h4>Display Settings</h4>
+
+        <label class="settings-toggle">
+            <input type="checkbox" id="toggleBackground">
+            Disable Background Animation
+        </label>
+
+        <label class="settings-toggle">
+            <input type="checkbox" id="toggleEffects">
+            Disable Visual Effects
+        </label>
+
+        <label class="settings-toggle">
+            <input type="checkbox" id="toggleBackgroundImage">
+            Remove Background Image
+        </label>
+
+        <button id="closeSettings" class="settings-close">Close</button>
+    </div>
+
 
     <!-- MOBILE NAV (slide-down) -->
     <nav id="mobileNav" class="dh-mobile-nav" aria-hidden="true">
@@ -61,14 +89,12 @@
 
                 <!-- CUSTOMIZE YOUR CHALLENGE -->
                 <section class="challenge-panel">
-                    <div class="challenge-panel-header">
-                        <h2>Customize Your Flash Activation Challenge</h2>
-                        <p>Create a challenge that fits your risk, payout, and payout schedule preferences.</p>
-                    </div>
 
                     <div class="custom-grid">
+
                         <!-- LEFT: CONTROLS -->
                         <div class="custom-controls">
+
                             <div class="field-group">
                                 <label>Account Size</label>
                                 <select class="custom-select" data-key="accountSize">
@@ -115,41 +141,33 @@
                                 </select>
                             </div>
 
-                            <div class="custom-cta">
-                                <a href="#standard-plans" class="dh-btn dh-btn-primary dh-btn-sm">
-                                    Go to Standard Plans
-                                </a>
-                            </div>
                         </div>
 
                         <!-- RIGHT: SUMMARY -->
                         <div class="custom-summary">
                             <h3>Your Challenge Snapshot</h3>
-                            <p class="summary-line">
-                                <span>Account Size:</span>
-                                <strong data-summary="accountSize">$5,000</strong>
-                            </p>
-                            <p class="summary-line">
-                                <span>Profit Target:</span>
-                                <strong data-summary="profitTarget">2%</strong>
-                            </p>
-                            <p class="summary-line">
-                                <span>Maximum Loss Limit:</span>
-                                <strong data-summary="maxLoss">6%</strong>
-                            </p>
-                            <p class="summary-line">
-                                <span>Profit Split:</span>
-                                <strong data-summary="profitSplit">60%</strong>
-                            </p>
-                            <p class="summary-line">
-                                <span>Payout Frequency:</span>
-                                <strong data-summary="payoutDays">3 days</strong>
+
+                            <p class="summary-line"><span>Account Size:</span> <strong
+                                    data-summary="accountSize">$5,000</strong></p>
+                            <p class="summary-line"><span>Profit Target:</span> <strong
+                                    data-summary="profitTarget">2%</strong></p>
+                            <p class="summary-line"><span>Maximum Loss Limit:</span> <strong
+                                    data-summary="maxLoss">6%</strong></p>
+                            <p class="summary-line"><span>Profit Split:</span> <strong
+                                    data-summary="profitSplit">60%</strong></p>
+                            <p class="summary-line"><span>Payout Frequency:</span> <strong data-summary="payoutDays">3
+                                    days</strong></p>
+
+                            <p class="summary-line summary-price">
+                                <span>Activation Fee:</span>
+                                <strong id="challengePrice">$—</strong>
                             </p>
 
                             <p class="summary-note">
                                 Final activation fees and evaluation details will be shown at checkout.
                             </p>
                         </div>
+
                     </div>
                 </section>
 
@@ -378,6 +396,82 @@
 
     </main>
 
+    <script>
+        (() => {
+            // --- Grab selects + summary fields (scoped, no global redeclare) ---
+            const dhSelects = document.querySelectorAll(".custom-select");
+
+            const dhSummaryMap = {
+                accountSize: document.querySelector("[data-summary='accountSize']"),
+                profitTarget: document.querySelector("[data-summary='profitTarget']"),
+                maxLoss: document.querySelector("[data-summary='maxLoss']"),
+                profitSplit: document.querySelector("[data-summary='profitSplit']"),
+                payoutDays: document.querySelector("[data-summary='payoutDays']")
+            };
+
+            const priceEl = document.getElementById("challengePrice");
+
+            // --- Whitepaper pricing tables ---
+            const baseFee = { 5000: 49, 10000: 79, 25000: 179, 50000: 299, 100000: 499 };
+            const mTarget = { 2: 1.40, 4: 1.20, 6: 1.00, 8: 0.90, 10: 0.85 };
+            const mLoss = { 4: 0.90, 6: 1.00, 8: 1.15, 10: 1.30, 12: 1.45 };
+            const mSplit = { 60: 0.90, 70: 1.00, 80: 1.10, 90: 1.25 };
+
+            // Your dropdown includes 21 days, so we support it:
+            const mPayout = { 3: 1.30, 7: 1.10, 14: 1.00, 21: 0.95, 30: 0.90 };
+
+            const parseNumber = (val) => parseInt(String(val).replace(/[^\d]/g, ""), 10);
+
+            function calculateFlashPrice() {
+                const values = {};
+                dhSelects.forEach(sel => values[sel.dataset.key] = sel.value);
+
+                const accountSize = parseNumber(values.accountSize);
+                const profitTarget = parseNumber(values.profitTarget);
+                const maxLoss = parseNumber(values.maxLoss);
+                const profitSplit = parseNumber(values.profitSplit);
+                const payoutDays = parseNumber(values.payoutDays);
+
+                if (
+                    !baseFee[accountSize] ||
+                    !mTarget[profitTarget] ||
+                    !mLoss[maxLoss] ||
+                    !mSplit[profitSplit] ||
+                    !mPayout[payoutDays]
+                ) return null;
+
+                return Math.round(
+                    baseFee[accountSize] *
+                    mTarget[profitTarget] *
+                    mLoss[maxLoss] *
+                    mSplit[profitSplit] *
+                    mPayout[payoutDays]
+                );
+            }
+
+            function syncUI() {
+                // update snapshot text
+                dhSelects.forEach(sel => {
+                    const key = sel.dataset.key;
+                    if (dhSummaryMap[key]) dhSummaryMap[key].textContent = sel.value;
+                });
+
+                // update price
+                if (priceEl) {
+                    const price = calculateFlashPrice();
+                    priceEl.textContent = price === null ? "—" : `$${price}`;
+                }
+            }
+
+            // bind changes once
+            dhSelects.forEach(sel => sel.addEventListener("change", syncUI));
+
+            // initial
+            window.addEventListener("load", syncUI);
+        })();
+    </script>
+
+
     <!-- STARFIELD SCRIPT (same base as your home page) -->
     <script>
         const canvas = document.getElementById("starCanvas");
@@ -506,7 +600,7 @@
     </script>
     <script>
         // Mobile nav toggle (same as other pages)
-        (function(){
+        (function () {
             const toggle = document.querySelector('.dh-header-toggle');
             const mobileNav = document.getElementById('mobileNav');
             if (!toggle || !mobileNav) return;
@@ -530,6 +624,67 @@
             document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
         })();
     </script>
+
+    <script>
+        (() => {
+            const btn = document.getElementById("siteSettingsBtn");
+            const panel = document.getElementById("siteSettingsPanel");
+            const closeBtn = document.getElementById("closeSettings");
+
+            const bgToggle = document.getElementById("toggleBackground");
+            const fxToggle = document.getElementById("toggleEffects");
+            const bgImageToggle = document.getElementById("toggleBackgroundImage");
+
+            // Grab ALL star canvases across the page
+            const starCanvases = document.querySelectorAll("#starCanvas, canvas.starfield");
+
+            // Load saved preferences
+            const prefs = JSON.parse(localStorage.getItem("dhSitePrefs") || "{}");
+
+            bgToggle.checked = !!prefs.disableBackground;
+            fxToggle.checked = !!prefs.disableEffects;
+            bgImageToggle.checked = !!prefs.disableBgImage;
+
+            applyPrefs(prefs);
+
+            btn.addEventListener("click", () => {
+                panel.classList.toggle("open");
+            });
+
+            closeBtn.addEventListener("click", () => {
+                panel.classList.remove("open");
+            });
+
+            bgToggle.addEventListener("change", savePrefs);
+            fxToggle.addEventListener("change", savePrefs);
+            bgImageToggle.addEventListener("change", savePrefs);
+
+            function savePrefs() {
+                const newPrefs = {
+                    disableBackground: bgToggle.checked,
+                    disableEffects: fxToggle.checked,
+                    disableBgImage: bgImageToggle.checked
+                };
+
+                localStorage.setItem("dhSitePrefs", JSON.stringify(newPrefs));
+                applyPrefs(newPrefs);
+            }
+
+            function applyPrefs(p) {
+                // ⭐ Disable starfield animation (ALL sections)
+                starCanvases.forEach(c => {
+                    c.style.display = p.disableBackground ? "none" : "block";
+                });
+
+                // 💥 Disable visual effects globally
+                document.documentElement.classList.toggle("no-effects", !!p.disableEffects);
+
+                // 🖼 Remove background images globally
+                document.documentElement.classList.toggle("no-bg", !!p.disableBgImage);
+            }
+        })();
+    </script>
+
 
 </body>
 
